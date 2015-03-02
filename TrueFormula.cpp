@@ -6,7 +6,8 @@
 
 TrueFormula::TrueFormula(Element* ele) 
 	:_min(-1), _max(-1), max_continue(-1), recent_continue(-1),
-	lotter_list(&MainWindow::allLotters), _index(&MainWindow::currentListIndex)
+	lotter_list(&MainWindow::allLotters), _index(&MainWindow::currentListIndex),
+	indexId(-1)
 {
 	this->_formula = dynamic_cast<Formula*>(ele);
 }
@@ -20,6 +21,13 @@ TrueFormula* TrueFormula::RandGenerate(int number)
 {
 	auto ele = Formula::RandGenerate(number);
 	TrueFormula* tf = new TrueFormula(ele);
+	auto query = tf->insertIntoDB();
+	if (query.lastError().text().size()>2)
+	{
+		tf->releaseThis();
+		tf = TrueFormula::RandGenerate(number);
+	}
+	tf->InitIndexId();
 	return tf;
 }
 
@@ -137,6 +145,38 @@ TrueFormula* TrueFormula::createBy5V(QString text, int max_value, int min_value,
 	return ret;
 }
 
+TrueFormula* TrueFormula::createBy6V(QString text, int max_value, int min_value, int max_continue, int recent_continue, int in_id)
+{
+	auto ret = TrueFormula::createBy5V(text, max_value, min_value, max_continue, recent_continue);
+	ret->setIndexId(in_id);
+	return ret;
+}
+
+TrueFormula* TrueFormula::createByQuery(QSqlQuery query)
+{
+	TrueFormula* tf = nullptr;
+
+	QDate tmp_date = query.value("last_record").toDate();
+	QString tmp_text = query.value("text").toString();
+	int max_value = query.value("max_value").toInt();
+	int min_value = query.value("min_value").toInt();
+	int max_continues = query.value("max_continues").toInt();
+	int recent_continues = query.value("recent_continues").toInt();
+	int tmp_id = query.value("formula_id").toInt();
+	tf = createBy6V(tmp_text, max_value, min_value, max_continues, recent_continues, tmp_id);
+	return tf;
+}
+
+QSqlQuery TrueFormula::insertIntoDB()
+{
+	return _sqlUT->excuteCall("insertFormula('%s',%d,%d)",getText(),getMin(),getMax());
+}
+
+void TrueFormula::InitIndexId()
+{
+	setIndexId(_sqlUT->excuteFunc("getIndexId('%s')", getText()));
+}
+
 FormulaList* FormulaList::RandGenerate(int number, int numberFormula)
 {
 	FormulaList* fl = new FormulaList();
@@ -147,6 +187,11 @@ FormulaList* FormulaList::RandGenerate(int number, int numberFormula)
 void FormulaList::push_back(QString text)
 {
 	_list.push_back(TrueFormula::CreateByString(text));
+}
+
+void FormulaList::push_back(TrueFormula* tf)
+{
+	_list.push_back(tf);
 }
 
 FormulaList* FormulaList::GenerateFromFile()
@@ -243,4 +288,36 @@ FormulaList::FormulaList()
 	int tmp_Count = _sqlUT->excuteFunc("getCountFormula()");
 	PageCount = tmp_Count / 100;
 	CurrentPage = 0;
+}
+
+FormulaList* FormulaList::createByQuery(QSqlQuery query)
+{
+	FormulaList* fl = new FormulaList();
+	while (query.next())
+	{
+		fl->push_back(TrueFormula::createByQuery(query));
+	}
+	return fl;
+}
+
+FormulaList* FormulaList::createByDatabase(int page, int page_max)
+{
+	QSqlQuery query = _sqlUT->excuteCall("getFormulaByPage(%d,%d)", page, page_max);
+	return FormulaList::createByQuery(query);
+}
+
+void FormulaList::insertIntoDB()
+{
+	for(auto& obj: _list){
+		obj->insertIntoDB();
+	}
+}
+
+bool Formula_Value::operator==(Formula_Value fv)
+{
+	if (index_id = fv.index_id && the_date == fv.the_date)
+	{
+		return true;
+	}
+	return false;
 }

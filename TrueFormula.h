@@ -2,17 +2,25 @@
 #define __TrueFormula__
 #include "Formula.h"
 #include <QtCore>
+#include "QSqlQuery"
+#include "QMap"
 
 struct Lotter;
 
+struct Formula_Value
+{
+	Formula_Value(){};
+	Formula_Value(int v1, QDate v2, int v3){ index_id = v1; the_date = v2; predict = v3; };
+	Formula_Value(int v1, QDate v2){ index_id = v1; the_date = v2; };
+	int index_id;
+	QDate the_date;
+	int predict;
+	bool operator==(Formula_Value fv);
+
+};
+
 class TrueFormula{
 public:
-	static TrueFormula* RandGenerate(int);
-	static QList<TrueFormula*> RandGenerate(int, int);
-	static TrueFormula* CreateByString(QString);
-	static TrueFormula* createBy3V(QString, int, int);
-	static TrueFormula* createBy5V(QString, int, int, int, int);
-
 
 	int getMax();
 	int getMin();
@@ -29,6 +37,10 @@ public:
 
 	inline int getRecentContinue() const { return recent_continue; }
 	inline int getMaxContinue() const { return max_continue; }
+
+	inline int getIndexId() const { return indexId; }
+	inline void setIndexId(int val) { indexId = val; }
+
 private:
 	TrueFormula(Element*);
 	~TrueFormula();
@@ -38,14 +50,27 @@ private:
 	int* const _index;
 
 	int max_continue, recent_continue;
+	int indexId;
+
+public:
+	static TrueFormula* RandGenerate(int);
+	static QList<TrueFormula*> RandGenerate(int, int);
+	static TrueFormula* CreateByString(QString);
+	static TrueFormula* createBy3V(QString, int, int);
+	static TrueFormula* createBy5V(QString, int, int, int, int);
+	static TrueFormula* createBy6V(QString, int, int, int, int, int);
+	static TrueFormula* createByQuery(QSqlQuery);
+	QSqlQuery insertIntoDB();
+	void InitIndexId();
+	void updateByData(Lotter);
+	void getNeedUpdate(QList<Formula_Value>&);
 };
 
 class FormulaList{
 public:
 	FormulaList();
-	static FormulaList* RandGenerate(int,int);
-	static FormulaList* GenerateFromFile();
 	void push_back(QString);
+	void push_back(TrueFormula*);
 	inline int size(){ return _list.size(); };
 	inline TrueFormula* get(int index){ return _list.at(index); };
 	
@@ -62,6 +87,13 @@ private:
 	QList<TrueFormula*> _list;
 	int PageCount;
 	int CurrentPage;
+
+public:
+	static FormulaList* RandGenerate(int, int);
+	static FormulaList* GenerateFromFile();
+	static FormulaList* createByQuery(QSqlQuery);
+	static FormulaList* createByDatabase(int,int);
+	void insertIntoDB();
 };
 
 #endif
