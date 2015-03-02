@@ -37,6 +37,8 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 public:
+	static QList<Lotter> allLotters;
+
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
 	void Test1();
@@ -66,8 +68,6 @@ private:
 	Ui::MainWindow *ui;
 	
 	QList<Lotter> getLottersFromJson(QString);
-	
-	static QList<Lotter> allLotters;
 
 	FormulaList* formula_list;
 

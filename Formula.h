@@ -50,7 +50,7 @@ public://构造函数
 public://子类新函数
 	virtual void init()override{ setPriority(NumberPrority); };
 
-	virtual void Calculate(DataType) override;
+	virtual void Calculate(DataType, Lotter) override;
 	static Element* RandGenerate();
 
 	virtual inline int getValue() const override{ return getText().toInt(); };
@@ -72,7 +72,7 @@ public://子类新函数
 	void setHighestParent();
 
 	virtual void Parse() override;
-	virtual void Calculate(DataType) override;
+	virtual void Calculate(DataType, Lotter) override;
 
 	static Element* RandGenerate(int);
 	static Element* RandGenerate(int, Formula*);
@@ -86,7 +86,7 @@ public:
 private://属性
 	static QVector<QString> _signal;
 
-	void CalcualteByPriorty(int,DataType);
+	void CalcualteByPriorty(int,DataType, Lotter);
 
 };
 
@@ -95,7 +95,7 @@ public://构造函数
 	INIT_STRUCT(MathSignal_1, MathSignal);
 public://子类新函数
 	virtual void init() override { setPriority(Signal_1_Prority); };
-	virtual void Calculate(DataType) override;
+	virtual void Calculate(DataType, Lotter) override;
 	static Element* RandGenerate(Formula*);
 	static Element* RandGenerate();
 
@@ -110,7 +110,7 @@ public://构造函数
 	INIT_STRUCT(MathSignal_2, MathSignal);
 public://子类新函数
 	virtual void init() override { setPriority(Signal_2_Prority); };
-	virtual void Calculate(DataType) override;
+	virtual void Calculate(DataType, Lotter) override;
 	static Element* RandGenerate(Formula*);
 	static Element* RandGenerate();
 
@@ -125,7 +125,7 @@ public://构造函数
 	INIT_STRUCT(MathSignal_3, MathSignal);
 public://子类新函数
 	virtual void init() override { setPriority(Signal_3_Prority); };
-	virtual void Calculate(DataType) override;
+	virtual void Calculate(DataType, Lotter) override;
 	static Element* RandGenerate(Formula*);
 	static Element* RandGenerate();
 
@@ -140,7 +140,7 @@ public://构造函数
 	INIT_STRUCT(MathSignal_4, MathSignal);
 public://子类新函数
 	virtual void init() override { setPriority(Signal_4_Prority); };
-	virtual void Calculate(DataType) override;
+	virtual void Calculate(DataType, Lotter) override;
 	static Element* RandGenerate(Formula*);
 	static Element* RandGenerate();
 
@@ -156,7 +156,7 @@ public://子类新函数
 	virtual int getValue(int) const = 0;
 	virtual int getValue(Lotter)const = 0;
 	virtual void init() override { setPriority(MathTagPrority); };
-	virtual void Calculate(DataType) override;
+	virtual void Calculate(DataType, Lotter) override;
 	static Element* RandGenerate(Formula*);
 	
 	static QVector<QString> getSignal(){ return _signal; };

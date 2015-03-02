@@ -24,11 +24,11 @@ public:
 
 	int getMax();
 	int getMin();
-	int getValue();
+	int getValue(Lotter);
 	QString getText();
 
-	int getRedBall();
-	int getGreenBall();
+	int getRedBall(Lotter);
+	int getGreenBall(Lotter);
 	
 	bool isLegal();
 	bool CompareFormula(TrueFormula*);

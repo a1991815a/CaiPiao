@@ -4,6 +4,7 @@
 #include "CustomDefine.h"
 
 class Formula;
+struct Lotter;
 
 #define INIT_STRUCT(A,B)				\
 A(){init();};									\
@@ -24,7 +25,7 @@ protected://构造函数
 
 public://接口函数
 	virtual void Parse(){};
-	virtual void Calculate(DataType) = 0;
+	virtual void Calculate(DataType,Lotter) = 0;
 	virtual void init(){};
 
 public://getter,setter功能

@@ -78,7 +78,7 @@ void FormulaUI::predictNextLotter()
 		for (auto& obj2: obj)
 		{
 			MainWindow::currentListIndex = 0;
-			int value = fl->get(obj2)->getValue();
+			int value = fl->get(obj2)->getValue(Current_Lotter);
 			l.redBall.push_back(value);
 			l.greenBall = value;
 		}

@@ -462,14 +462,14 @@ void MainWindow::Test1()
 		Formula* testFormula = new Formula(obj->getText());
 		testFormula->Parse();
 
-		testFormula->Calculate(Element::DataMin);
-		obj->Calculate(Element::DataMin);
+		testFormula->Calculate(Element::DataMin, Lotter());
+		obj->Calculate(Element::DataMin, Lotter());
 
 		int testMin = testFormula->getValue();
 		int minValue = obj->getValue();
 
-		testFormula->Calculate(Element::DataMax);
-		obj->Calculate(Element::DataMax);
+		testFormula->Calculate(Element::DataMax, Lotter());
+		obj->Calculate(Element::DataMax, Lotter());
 
 		int testMax = testFormula->getValue();
 		int maxValue = obj->getValue();

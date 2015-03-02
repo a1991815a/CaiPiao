@@ -28,7 +28,7 @@ class ValueModelBase: public LotterTag{
 public:
 	INIT_STRUCT(ValueModelBase, LotterTag);
 	
-	virtual void Calculate(DataType) override;
+	virtual void Calculate(DataType, Lotter) override;
 
 	static int getRand(unsigned int min, unsigned int max);
 	static int getMax(QList<int>);

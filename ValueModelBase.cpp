@@ -221,7 +221,7 @@ int ValueModelBase::getSum(QList<int> in)
 	return sum;
 }
 
-void ValueModelBase::Calculate(DataType type)
+void ValueModelBase::Calculate(DataType type, Lotter lotter)
 {
 	switch (type)
 	{
@@ -229,7 +229,7 @@ void ValueModelBase::Calculate(DataType type)
 		setValue(_min);
 		break;
 	case Element::DataNormal:
-		setValue(getValue(MainWindow::currentListIndex));
+		setValue(getValue(lotter));
 		break;
 	case Element::DataMax:
 		setValue(_max);

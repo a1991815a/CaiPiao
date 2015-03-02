@@ -122,7 +122,7 @@ void MathSignal::MergeLeft(int index)
 	}
 	auto ret = new MathNumber(QString::number(getValue()));
 	ret->setParentDetach(getParent());
-	ret->Calculate(DataNormal);
+	ret->Calculate(DataNormal, Lotter());
 	vec.insert(index - 1, ret);
 }
 
@@ -147,7 +147,7 @@ void MathSignal::MergeRight(int index)
 	}
 	auto ret = new MathNumber(QString::number(getValue()));
 	ret->setParentDetach(getParent());
-	ret->Calculate(DataNormal);
+	ret->Calculate(DataNormal, Lotter());
 	vec.insert(index, ret);
 }
 
@@ -186,11 +186,11 @@ void MathSignal::MergeDouble(int index)
 	auto ret = new MathNumber(QString::number(getValue()));
 	ret->setParentDetach(getParent());
 
-	ret->Calculate(DataNormal);
+	ret->Calculate(DataNormal, Lotter());
 	vec.insert(index - 1, ret);
 }
 
-void MathNumber::Calculate(DataType)
+void MathNumber::Calculate(DataType,Lotter)
 {
 	setValue(getText().toInt());
 }
@@ -201,14 +201,14 @@ Element* MathNumber::RandGenerate()
 	return new MathNumber(QString::number(value));
 }
 
-void Formula::CalcualteByPriorty(int priorty,DataType type)
+void Formula::CalcualteByPriorty(int priorty,DataType type, Lotter lotter)
 {	
 
 	for (auto& obj: CalculatePoor)
 	{
 		if (obj->getPriority() == priorty)
 		{
-			obj->Calculate(type);
+			obj->Calculate(type,lotter);
 		}
 	}
 
@@ -229,13 +229,13 @@ void Formula::clearCalculatePoor()
 }
 
 
-void Formula::Calculate(DataType type)
+void Formula::Calculate(DataType type, Lotter lotter)
 {
 	CalculatePoor = getList();
 
 	for (size_t i = 0; i <= MaxPrority; i++)
 	{
-		CalcualteByPriorty(i,type);
+		CalcualteByPriorty(i,type,lotter);
 	}
 	
 	_debugUtils->isOutRange(CalculatePoor, 0, "FormulaBase::removeEle", FILE_LINE);
@@ -324,19 +324,19 @@ Element* Formula::RandGenerate(int number, Formula* parent)
 	return ret;
 }
 
-void MathSignal_1::Calculate(DataType type)
+void MathSignal_1::Calculate(DataType type, Lotter lotter)
 {
 	int index = getParent()->CalculatePoor.indexOf(this,0);
 	auto rightEle = getRightEleFromPoor();
 
-	rightEle->Calculate(Element::DataMin);
+	rightEle->Calculate(Element::DataMin, lotter);
 	int minvalue = rightEle->getValue();
 
 	
-	rightEle->Calculate(Element::DataMax);
+	rightEle->Calculate(Element::DataMax, lotter);
 	int maxvalue = rightEle->getValue();
 
-	rightEle->Calculate(type);
+	rightEle->Calculate(type, lotter);
 	int rightValue = rightEle->getValue();
 
 	
@@ -387,21 +387,21 @@ Element* MathSignal_1::RandGenerate()
 	return new MathSignal_1(MathSignal_1::getSignal().at(i));
 }
 
-void MathSignal_2::Calculate(DataType type)
+void MathSignal_2::Calculate(DataType type, Lotter lotter)
 {
 	int index = getParent()->CalculatePoor.indexOf(this);
 
 	auto LeftEle = getLeftEleFromPoor();
 	auto RightEle = getRightEleFromPoor();
 
-	LeftEle->Calculate(Element::DataMin);
-	LeftEle->Calculate(Element::DataMax);
+	LeftEle->Calculate(Element::DataMin, lotter);
+	LeftEle->Calculate(Element::DataMax, lotter);
 
-	RightEle->Calculate(Element::DataMin);
-	RightEle->Calculate(Element::DataMax);
+	RightEle->Calculate(Element::DataMin, lotter);
+	RightEle->Calculate(Element::DataMax, lotter);
 
-	LeftEle->Calculate(type);
-	RightEle->Calculate(type);
+	LeftEle->Calculate(type, lotter);
+	RightEle->Calculate(type, lotter);
 	int rightValue = RightEle->getValue();
 	int leftValue = LeftEle->getValue();
 
@@ -447,20 +447,20 @@ Element* MathSignal_2::RandGenerate()
 	return new MathSignal_2(getSignal().at(tmp));
 }
 
-void MathSignal_3::Calculate(DataType type)
+void MathSignal_3::Calculate(DataType type, Lotter lotter)
 {
 	int index = getParent()->CalculatePoor.indexOf(this);
 
 	auto LeftEle = getLeftEleFromPoor();
 	auto RightEle = getRightEleFromPoor();
 
-	RightEle->Calculate(DataMin);
+	RightEle->Calculate(DataMin, lotter);
 	int minvalue = RightEle->getValue();
-	RightEle->Calculate(Element::DataMax);
+	RightEle->Calculate(Element::DataMax, lotter);
 	int maxvalue = RightEle->getValue();
 
-	LeftEle->Calculate(type);
-	RightEle->Calculate(type);
+	LeftEle->Calculate(type, lotter);
+	RightEle->Calculate(type, lotter);
 	int rightValue = RightEle->getValue();
 	int leftValue = LeftEle->getValue();
 
@@ -512,20 +512,20 @@ Element* MathSignal_3::RandGenerate()
 	return new MathSignal_3(getSignal().at(tmp));
 }
 
-void MathSignal_4::Calculate(DataType type)
+void MathSignal_4::Calculate(DataType type, Lotter lotter)
 {
 	int index = getParent()->CalculatePoor.indexOf(this);
 	
 	auto LeftEle = getLeftEleFromPoor();
 	auto RightEle = getRightEleFromPoor();
 
-	RightEle->Calculate(DataMin);
+	RightEle->Calculate(DataMin, lotter);
 	int minvalue = RightEle->getValue();
-	RightEle->Calculate(Element::DataMax);
+	RightEle->Calculate(Element::DataMax, lotter);
 	int maxvalue = RightEle->getValue();
 
-	LeftEle->Calculate(type);
-	RightEle->Calculate(type);
+	LeftEle->Calculate(type, lotter);
+	RightEle->Calculate(type, lotter);
 	int rightValue = RightEle->getValue();
 	int leftValue = LeftEle->getValue();
 
@@ -584,7 +584,7 @@ Element* LotterTag::RandGenerate(Formula* parent)
 	return vmb;
 }
 
-void LotterTag::Calculate(DataType type)
+void LotterTag::Calculate(DataType type, Lotter lotter)
 {
 	switch (type)
 	{
@@ -607,14 +607,14 @@ Element* MathSignal::RandGenerate(Element* ele)
 {
 	Element* leftEle = ele->getLeftElement();
 
-	leftEle->Calculate(Element::DataMin);
+	leftEle->Calculate(Element::DataMin, Lotter());
 	int lmin = leftEle->getValue();
-	leftEle->Calculate(Element::DataMax);
+	leftEle->Calculate(Element::DataMax, Lotter());
 	int lmax = leftEle->getValue();
 
-	ele->Calculate(Element::DataMin);
+	ele->Calculate(Element::DataMin, Lotter());
 	int min_value = ele->getValue() ;
-	ele->Calculate(Element::DataMax);
+	ele->Calculate(Element::DataMax, Lotter());
 	int max_value = ele->getValue();
 
 	int ran = ValueModelBase::getRand(1, 10);

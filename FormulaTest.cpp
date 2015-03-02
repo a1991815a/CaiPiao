@@ -20,9 +20,9 @@ bool FormulaTest::TestFormula(Element* formula)
 {
 	bool end = true;
 
-	formula->Calculate(Element::DataMin);
+	formula->Calculate(Element::DataMin, Lotter());
 	int minValue = formula->getValue();
-	formula->Calculate(Element::DataMax);
+	formula->Calculate(Element::DataMax, Lotter());
 	int maxValue = formula->getValue();
 
 	const QList<Lotter>* const lotter_list = &MainWindow::allLotters;
@@ -30,7 +30,7 @@ bool FormulaTest::TestFormula(Element* formula)
 	for (size_t i = 0; i < lotter_list->size(); i++)
 	{
 		MainWindow::currentListIndex = i;
-		formula->Calculate(Element::DataNormal);
+		formula->Calculate(Element::DataNormal, lotter_list->at(i));
 		int value = formula->getValue();
 		
 		
@@ -88,7 +88,7 @@ void FormulaTest::TestValue(QString tag)
 
 	int minV = ele->getMinValue();
 	int maxV = ele->getMaxValue();
-	ele->Calculate(Element::DataNormal);
+	ele->Calculate(Element::DataNormal, ele->lotter_list->at(MainWindow::currentListIndex));
 	QList<int> outrange;
 	for (auto obj: lotter)
 	{
@@ -136,11 +136,11 @@ void FormulaTest::TestFormula(int number)
 	for (auto& obj: formula)
 	{
 		obj = Formula::RandGenerate(number);
-		obj->Calculate(Element::DataMin);
+		obj->Calculate(Element::DataMin, Lotter());
 		int minValue = obj->getValue();
-		obj->Calculate(Element::DataMax);
+		obj->Calculate(Element::DataMax, Lotter());
 		int maxValue = obj->getValue();
-		obj->Calculate(Element::DataNormal);
+		obj->Calculate(Element::DataNormal, Lotter());
 		int normalValue = obj->getValue();
 
 		ADD_INFO(obj->getText() + "  :" + QString::number(normalValue) + " :" + QString::number(minValue) + "  " + QString::number(maxValue));

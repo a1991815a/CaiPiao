@@ -60,7 +60,7 @@ int TrueFormula::getMin()
 {
 	if (_min == -1)
 	{
-		_formula->Calculate(Element::DataMin);
+		_formula->Calculate(Element::DataMin, Lotter());
 		_min = _formula->getValue();
 	}
 
@@ -71,15 +71,15 @@ int TrueFormula::getMax()
 {
 	if (_max == -1)
 	{
-		_formula->Calculate(Element::DataMax);
+		_formula->Calculate(Element::DataMax, Lotter());
 		_max = _formula->getValue();
 	}
 	return _max;
 }
 
-int TrueFormula::getValue()
+int TrueFormula::getValue(Lotter lotter)
 {
-	_formula->Calculate(Element::DataNormal);
+	_formula->Calculate(Element::DataNormal, lotter);
 	return _formula->getValue();
 }
 
@@ -119,14 +119,14 @@ bool TrueFormula::CompareFormula(TrueFormula* tf)
 	return false;
 }
 
-int TrueFormula::getRedBall()
+int TrueFormula::getRedBall(Lotter lotter)
 {
-	return getValue() % 33 + 1;
+	return getValue(lotter) % 33 + 1;
 }
 
-int TrueFormula::getGreenBall()
+int TrueFormula::getGreenBall(Lotter lotter)
 {
-	return getValue() % 16 + 1;
+	return getValue(lotter) % 16 + 1;
 }
 
 TrueFormula* TrueFormula::createBy3V(QString text, int max_value, int min_value)
