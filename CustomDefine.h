@@ -34,6 +34,7 @@ enum Formula_Type
 #define NumberPrority 6
 #define MathTagPrority 7
 
+#define UPDATE_TIME 21,0,0
 
 #define Current_Lotter MainWindow::allLotters.at(MainWindow::currentListIndex)
 

@@ -1,4 +1,5 @@
-﻿#include "mainwindow.h"
+#include "DBThread.h"
+#include "mainwindow.h"
 #include <fstream>
 #include "DataUtils.h"
 #include "baseValue.h"
@@ -10,6 +11,7 @@
 #include "DataManager.h"
 #include "MysqlUtils.h"
 #include <QMenu>
+#include <QMessageBox>
 
 
 
@@ -51,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->formulaBT, SIGNAL(clicked()), this, SLOT(formulaBT()));
 	net->get(QNetworkRequest(QUrl("http://f.opencai.net/utf8/ssq-50.json")));
 	
-	_dataManager->initAll();
+	
 
 	
 }
@@ -71,16 +73,20 @@ void MainWindow::replyFinished(QNetworkReply* reply){
 	//qDebug() << 1;
 
 	allLotters = getLottersFromJson(all);
-
-	//qDebug() << 2;
+	
+	for(auto& obj: allLotters){
+		QDate tmp_date = obj.date;
+		int r1 = obj.redBall.at(0);
+		int r2 = obj.redBall.at(1);
+		int r3 = obj.redBall.at(2);
+		int r4 = obj.redBall.at(3);
+		int r5 = obj.redBall.at(4);
+		int r6 = obj.redBall.at(5);
+		int tmp_green = obj.greenBall;
+		_sqlUT->excuteCall("insertLotter('%s',%d,%d,%d,%d,%d,%d,%d)", tmp_date.toString("yyyy-MM-dd").toStdString().c_str(), r1, r2, r3, r4, r5, r6, tmp_green);
+	}
 
 	allLotters = getLotter(allLotters);
-
-	//qDebug() << 3;
-
-	exportCSV(allLotters);
-
-	//qDebug() << 4;
 
 	for (auto& obj : allLotters)
 	{
@@ -521,7 +527,14 @@ void MainWindow::formulaBT()
 
 void MainWindow::exitAction()
 {
-	exit(0);
+	if (_dbThread->getInstance()->isEmpty())
+		exit(0);
+	else
+	{
+		QMessageBox box;
+		box.setText("正在更新数据库，请稍后退出！");
+		box.exec();
+	}
 }
 
 void MainWindow::onSystemTrayIconClicked(QSystemTrayIcon::ActivationReason reason)

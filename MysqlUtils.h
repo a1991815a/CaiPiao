@@ -24,7 +24,7 @@ public:
 	QSqlQuery excuteCall(const char* format, ...);
 	int excuteFunc(const char* format, ...);
 	QSqlQuery excute(const char* format,...);
-private:
+public:
 	QSqlQuery excuteCall(QString);
 	int excuteFunc(QString);
 	QSqlQuery excute(QString);
