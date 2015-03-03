@@ -36,6 +36,8 @@ enum Formula_Type
 
 #define UPDATE_TIME 21,0,0
 
+#define SLEEP_TIME 60
+
 #define Current_Lotter MainWindow::allLotters.at(MainWindow::currentListIndex)
 
 #endif

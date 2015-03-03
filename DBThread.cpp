@@ -1,5 +1,6 @@
 #include "DBThread.h"
 #include "MysqlUtils.h"
+#include "CustomDefine.h"
 
 DBThread* DBThread::_instance = nullptr;
 
@@ -14,16 +15,8 @@ DBThread* DBThread::getInstance()
 
 
 DBThread::DBThread()
-	:loop(true)
+	:loop(true), can_start(false)
 {}
-
-void DBThread::run()
-{
-	while (loop)
-	{
-		excuteNext();
-	}
-}
 
 void DBThread::pushCall(const char* format, ...)
 {
@@ -61,11 +54,17 @@ void DBThread::pushSql(QString _sql)
 
 void DBThread::excuteNext()
 {
-	sleep(60);
 	if (!_sql_list.isEmpty())
 	{
 		for (auto& obj : _sql_list){
 			_sqlUT->excute(obj);
+			qDebug() << obj;
+			_sql_list.removeOne(obj);
 		}
 	}
+}
+
+void DBThread::startSendSql()
+{
+	can_start = true;
 }

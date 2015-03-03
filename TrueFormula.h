@@ -82,6 +82,7 @@ public:
 
 	void addList(FormulaList*);
 	bool containsByText(TrueFormula*);
+	
 private:
 	~FormulaList(){};
 	QList<TrueFormula*> _list;

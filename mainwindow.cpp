@@ -19,10 +19,10 @@ QList<Lotter> MainWindow::allLotters;
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
-	ui(new Ui::MainWindow),
-	formula_list(FormulaList::GenerateFromFile())
+	ui(new Ui::MainWindow)
 {	
 	_sqlUT->openDB();
+	formula_list = FormulaList::createByQuery(_sqlUT->excute("select * from formula"));
 
 	QIcon icon(QDir::currentPath() + "/GeneratedFiles/fucai.jpg");
 	trayicon = new QSystemTrayIcon(this);
@@ -53,8 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->formulaBT, SIGNAL(clicked()), this, SLOT(formulaBT()));
 	net->get(QNetworkRequest(QUrl("http://f.opencai.net/utf8/ssq-50.json")));
 	
-	
-
+	_dataManager->start();
 	
 }
 
@@ -62,12 +61,6 @@ void MainWindow::replyFinished(QNetworkReply* reply){
 	QTextCodec* codec = QTextCodec::codecForName("UTF-8");
 	QString all = codec->toUnicode(reply->readAll());
 
-	QString outPath = QDir::currentPath();
-	outPath.append("/data.txt");
-	//qDebug() << outPath;
-	std::ofstream out(outPath.toStdString());
-
-	out.close();
 	reply->deleteLater();
 
 	//qDebug() << 1;
@@ -261,8 +254,8 @@ QList<Lotter> MainWindow::getLotter(QList<Lotter> json_in)
 	
 	//qDebug() << 21;
 
-	auto CSV_in = getLotterFromCSV();
-
+	auto CSV_in = getFromDB();
+	
 	//qDebug() << 22;
 
 	for (auto& obj: CSV_in)
@@ -287,22 +280,6 @@ QList<Lotter> MainWindow::getLotter(QList<Lotter> json_in)
 			out.push_front(obj1);
 		}
 	}
-// 	for (auto& obj1: json_in)
-// 	{
-// 		bool condition = true;
-// 		for (auto& obj2 : out)
-// 		{
-// 			condition = condition && !(obj1 == obj2);
-// 		}
-// 
-// 		if (condition)
-// 		{
-// 			out.push_front(obj1);
-// 		}
-// 
-// 	}
-
-	//qDebug() << 24;
 
 	return out;
 }
@@ -560,6 +537,27 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	event->ignore();
 	this->hide();
 	trayicon->showMessage(tr("hahaya"), tr("托盘测试"), QSystemTrayIcon::Information, 5000);
+}
+
+QList<Lotter> MainWindow::getFromDB()
+{
+	QList<Lotter> qlotters;
+	QSqlQuery query = _sqlUT->excute("SELECT * FROM lotter ORDER BY the_date DESC LIMIT 50;");
+	while (query.next())
+	{
+		QList<int> qRedBall;
+		QDate tmp_date = query.value("the_date").toDate();
+		qRedBall.push_back(query.value("r1").toInt());
+		qRedBall.push_back(query.value("r2").toInt());
+		qRedBall.push_back(query.value("r3").toInt());
+		qRedBall.push_back(query.value("r4").toInt());
+		qRedBall.push_back(query.value("r5").toInt());
+		qRedBall.push_back(query.value("r6").toInt());
+		int tmp_green = query.value("green").toInt();
+		qlotters.push_back(Lotter(qRedBall, tmp_green, tmp_date));
+	}
+
+	return qlotters;
 }
 
 int MainWindow::currentListIndex = 0;

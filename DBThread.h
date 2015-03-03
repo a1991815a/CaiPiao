@@ -4,10 +4,8 @@
 
 #define _dbThread DBThread::getInstance()
 
-class DBThread:public QThread{
+class DBThread{
 public:
-	virtual void run() override;
-
 	void pushSql(QString);
 	void pushSql(const char* format, ...);
 	void pushCall(const char* format, ...);
@@ -16,6 +14,8 @@ public:
 	void clearAll();
 
 	void turnLoop(bool loop){ this->loop = loop; };
+
+	void startSendSql();
 
 	inline bool isEmpty(){ return _sql_list.isEmpty(); };
 private:
@@ -27,5 +27,8 @@ public:
 	static DBThread* getInstance();
 private:
 	static DBThread* _instance;
+
+	volatile bool can_start;
+
 };
 #endif

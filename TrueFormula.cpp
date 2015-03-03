@@ -160,8 +160,8 @@ TrueFormula* TrueFormula::createByQuery(QSqlQuery query)
 	QString tmp_text = query.value("text").toString();
 	int max_value = query.value("max_value").toInt();
 	int min_value = query.value("min_value").toInt();
-	int max_continues = query.value("max_continues").toInt();
-	int recent_continues = query.value("recent_continues").toInt();
+	int max_continues = query.value("max_continue").toInt();
+	int recent_continues = query.value("recent_continue").toInt();
 	int tmp_id = query.value("formula_id").toInt();
 	tf = createBy6V(tmp_text, max_value, min_value, max_continues, recent_continues, tmp_id);
 	return tf;
@@ -169,7 +169,7 @@ TrueFormula* TrueFormula::createByQuery(QSqlQuery query)
 
 QSqlQuery TrueFormula::insertIntoDB()
 {
-	return _sqlUT->excuteCall("insertFormula('%s',%d,%d)",getText(),getMin(),getMax());
+	return _sqlUT->excuteCall("insertFormula('%s',%d,%d)",getText().toStdString().c_str(),getMin(),getMax());
 }
 
 void TrueFormula::InitIndexId()

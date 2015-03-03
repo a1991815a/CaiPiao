@@ -53,6 +53,7 @@ public:
 
 	QList<Lotter> getLotterFromCSV();
 	QList<Lotter> getLotter(QList<Lotter>);
+	QList<Lotter> getFromDB();
 
 	static int currentListIndex;
 
