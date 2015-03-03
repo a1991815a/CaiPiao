@@ -6,6 +6,7 @@
 #include "QMap"
 
 struct Lotter;
+class TrueFormula;
 
 struct Formula_Value
 {
@@ -16,11 +17,12 @@ struct Formula_Value
 	QDate the_date;
 	int predict;
 	bool operator==(Formula_Value fv);
-
+	TrueFormula* the_formula;
 };
 
 class TrueFormula{
 public:
+	void parse();
 
 	int getMax();
 	int getMin();
@@ -62,8 +64,6 @@ public:
 	static TrueFormula* createByQuery(QSqlQuery);
 	QSqlQuery insertIntoDB();
 	void InitIndexId();
-	void updateByData(Lotter);
-	void getNeedUpdate(QList<Formula_Value>&);
 };
 
 class FormulaList{
@@ -94,6 +94,7 @@ public:
 	static FormulaList* createByQuery(QSqlQuery);
 	static FormulaList* createByDatabase(int,int);
 	void insertIntoDB();
+
 };
 
 #endif

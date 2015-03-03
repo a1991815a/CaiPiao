@@ -282,7 +282,9 @@ echo f|xcopy .\GeneratedFiles\ui_formulaui.h .\ui_formulaui.h /y </Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseValueFactory.cpp" />
+    <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="DataUtils.cpp" />
+    <ClCompile Include="DBThread.cpp" />
     <ClCompile Include="DebugUtils.cpp" />
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="ElementAllTag.cpp" />
@@ -817,8 +819,13 @@ endlocal
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DataManager.h" />
+    <ClInclude Include="DBThread.h" />
     <ClInclude Include="GeneratedFiles\ui_formulaui.h" />
     <ClInclude Include="GeneratedFiles\ui_mainwindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="GeneratedFiles\fucai.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

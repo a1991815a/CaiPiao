@@ -592,7 +592,7 @@ void LotterTag::Calculate(DataType type, Lotter lotter)
 		setValue(getMinValue());
 		break;
 	case Element::DataNormal:
-		setValue(getValue(MainWindow::currentListIndex));
+		setValue(getValue(lotter));
 		break;
 	case Element::DataMax:
 		setValue(getMaxValue());

@@ -7,6 +7,11 @@
 #include "FormulaTest.h"
 #include "ui_mainwindow.h"
 #include "formulaui.h"
+#include "DataManager.h"
+#include "MysqlUtils.h"
+#include <QMenu>
+
+
 
 QList<Lotter> MainWindow::allLotters;
 
@@ -15,6 +20,24 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow),
 	formula_list(FormulaList::GenerateFromFile())
 {	
+	_sqlUT->openDB();
+
+	QIcon icon(QDir::currentPath() + "/GeneratedFiles/fucai.jpg");
+	trayicon = new QSystemTrayIcon(this);
+	trayicon->setIcon(icon);
+	trayicon->show();
+	//设置右键点击时弹出的菜单
+	QAction *action1 = new QAction(this);
+	action1->setText("exit");
+	QMenu *menu = new QMenu(this);
+	menu->addAction(action1);
+	trayicon->setContextMenu(menu);
+
+	connect(action1, SIGNAL(triggered()), this, SLOT(exitAction()));
+	connect(trayicon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(onSystemTrayIconClicked(QSystemTrayIcon::ActivationReason)));
+
+	trayicon->setToolTip(tr("托盘测试"));
+
 	if (formula_list == nullptr)
 	{
 		formula_list = new FormulaList();
@@ -27,7 +50,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->showList, SIGNAL(currentRowChanged(int)), this, SLOT(RowChanged(int)));
 	connect(ui->formulaBT, SIGNAL(clicked()), this, SLOT(formulaBT()));
 	net->get(QNetworkRequest(QUrl("http://f.opencai.net/utf8/ssq-50.json")));
-	int i = 0;
+	
+	_dataManager->initAll();
+
+	
 }
 
 void MainWindow::replyFinished(QNetworkReply* reply){
@@ -491,6 +517,36 @@ void MainWindow::formulaBT()
 	FormulaUI formula_ui;
 	formula_ui.initFormula(formula_list,this);
 	formula_ui.exec();
+}
+
+void MainWindow::exitAction()
+{
+	exit(0);
+}
+
+void MainWindow::onSystemTrayIconClicked(QSystemTrayIcon::ActivationReason reason)
+{
+	switch (reason)
+	{
+		//单击
+	case QSystemTrayIcon::Trigger:
+		break;
+		//双击
+	case QSystemTrayIcon::DoubleClick:
+		//恢复窗口显示
+		this->setWindowState(Qt::WindowActive);
+		this->show();
+		break;
+	default:
+		break;
+	}
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+	event->ignore();
+	this->hide();
+	trayicon->showMessage(tr("hahaya"), tr("托盘测试"), QSystemTrayIcon::Information, 5000);
 }
 
 int MainWindow::currentListIndex = 0;

@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QtNetwork>
 #include "TrueFormula.h"
+#include <QSystemTrayIcon>
+#include "qevent.h"
 
 namespace Ui {
 class MainWindow;
@@ -64,6 +66,10 @@ void RowChanged(int);
 
 void formulaBT();
 
+void exitAction();
+
+void onSystemTrayIconClicked(QSystemTrayIcon::ActivationReason);
+
 private:
 	Ui::MainWindow *ui;
 	
@@ -71,11 +77,16 @@ private:
 
 	FormulaList* formula_list;
 
+	QSystemTrayIcon* trayicon;
+
 	friend class ValueModelBase;
 	friend class FormulaTest;
 	friend class TrueFormula;
 	friend class FormulaList;
 	friend class ExtractUtils;
+
+protected:
+	void closeEvent(QCloseEvent *event);
 };
 
 #endif // MAINWINDOW_H

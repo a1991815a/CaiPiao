@@ -177,6 +177,11 @@ void TrueFormula::InitIndexId()
 	setIndexId(_sqlUT->excuteFunc("getIndexId('%s')", getText()));
 }
 
+void TrueFormula::parse()
+{
+	_formula->Parse();
+}
+
 FormulaList* FormulaList::RandGenerate(int number, int numberFormula)
 {
 	FormulaList* fl = new FormulaList();
