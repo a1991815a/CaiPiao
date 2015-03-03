@@ -190,5 +190,13 @@
     <Image Include="GeneratedFiles\fucai.jpg">
       <Filter>Generated Files</Filter>
     </Image>
+    <Image Include="CaiPiao.ico">
+      <Filter>Generated Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CaiPiao.rc">
+      <Filter>Generated Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

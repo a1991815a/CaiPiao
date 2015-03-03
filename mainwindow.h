@@ -88,6 +88,7 @@ private:
 
 protected:
 	void closeEvent(QCloseEvent *event);
+	QDate last_record;
 };
 
 #endif // MAINWINDOW_H

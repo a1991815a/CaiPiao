@@ -825,7 +825,11 @@ endlocal
     <ClInclude Include="GeneratedFiles\ui_mainwindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="CaiPiao.ico" />
     <Image Include="GeneratedFiles\fucai.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CaiPiao.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {	
 	_sqlUT->openDB();
 	formula_list = FormulaList::createByQuery(_sqlUT->excute("select * from formula"));
+	last_record = _sqlUT->excute("select * from RecordData").value(0).toDate();
 
 	QIcon icon(QDir::currentPath() + "/GeneratedFiles/fucai.jpg");
 	trayicon = new QSystemTrayIcon(this);
@@ -53,8 +54,21 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->formulaBT, SIGNAL(clicked()), this, SLOT(formulaBT()));
 	net->get(QNetworkRequest(QUrl("http://f.opencai.net/utf8/ssq-50.json")));
 	
-	_dataManager->start();
 	
+
+	if (last_record < QDate::currentDate())
+	{
+		QString out_data = QDate::currentDate().toString("yyyy-MM-dd");
+		_sqlUT->excute("update RecordData set last_record='%s'", out_data.toStdString().c_str());
+		for (int i = 0; i < 50; i++)
+		{
+			int no1 = ValueModelBase::getRand(5, 13);
+			qDebug() << no1;
+			TrueFormula::RandGenerate(no1);
+		}
+	}
+
+	_dataManager->start();
 }
 
 void MainWindow::replyFinished(QNetworkReply* reply){

@@ -31,3 +31,9 @@ HEADERS +=
 
 SOURCES += \
     formulaui.cpp
+
+OTHER_FILES += \
+    caipiao.rc
+
+RC_FILE = \
+    qtdemo.rc
