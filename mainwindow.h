@@ -7,6 +7,8 @@
 #include <QSystemTrayIcon>
 #include "qevent.h"
 
+#define CHANGE_TASK(A,B,C) MainWindow::getInstance()->changeTask(A,B,C)
+
 namespace Ui {
 class MainWindow;
 }
@@ -39,7 +41,9 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 public:
+	void changeTask(int, int, bool);
 	static QList<Lotter> allLotters;
+	inline static MainWindow* getInstance(){ return _instance; };
 
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
@@ -58,7 +62,12 @@ public:
 	static int currentListIndex;
 
 	static QString genPath;
+signals:
+void processChange(int);
+
 private slots:
+void changeProcess(int);
+
 void replyFinished(QNetworkReply*);
 
 void TEST_1();
@@ -89,6 +98,7 @@ private:
 protected:
 	void closeEvent(QCloseEvent *event);
 	QDate last_record;
+	static MainWindow* _instance;
 };
 
 #endif // MAINWINDOW_H

@@ -1,6 +1,10 @@
 #include "formulaui.h"
 #include "ui_formulaui.h"
 #include "ValueModelBase.h"
+#include "MysqlUtils.h"
+#include <QMessageBox>
+#include "DataManager.h"
+#include <QtDebug>
 
 FormulaUI::FormulaUI(QWidget *parent) :
 	QDialog(parent),
@@ -12,7 +16,7 @@ FormulaUI::FormulaUI(QWidget *parent) :
 	connect(ui->predictBT, SIGNAL(clicked()), this, SLOT(predictNextLotter()));
 	connect(this, SIGNAL(FormulaChanged(TrueFormula*)), this, SLOT(ChangedFormula(TrueFormula*)));
 	connect(this, SIGNAL(initFunc()), this, SLOT(initFuncSlot()));
-	
+
 	ui->FormulaListUI->setColumnWidth(0, 527);
 	ui->FormulaListUI->setShowGrid(false);
 	ui->FormulaListUI->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
@@ -48,49 +52,6 @@ void FormulaUI::generateFormulate()
 		emit FormulaChanged(obj);
 	}
 	
-}
-
-void FormulaUI::predictNextLotter()
-{
-	int prcNum = ui->PredictNumberEdit->text().toInt();
-	if (prcNum <= 0)
-	{
-		return;
-	}
-	QList<QList<int>> formula_index_list;
-	QList<QString> for_text;
-	for (size_t i = 0; i < prcNum; i++)
-	{
-		QList<int> rand_index;
-		for (size_t j = 0; j < 7; j++)
-		{
-			int index = ValueModelBase::getRand(1, fl->size());
-			rand_index.push_back(index);
-		}
-		formula_index_list.push_back(rand_index);
-	}
-
-	QList<Lotter> lotter_list;
-
-	for (auto& obj: formula_index_list)
-	{
-		Lotter l;
-		for (auto& obj2: obj)
-		{
-			MainWindow::currentListIndex = 0;
-			int value = fl->get(obj2)->getValue(Current_Lotter);
-			l.redBall.push_back(value);
-			l.greenBall = value;
-		}
-		lotter_list.push_back(l);
-	}
-
-	QList<QString> out_list;
-
-	for (auto& obj : lotter_list)
-	{
-		addLotterItem(obj);
-	}
 }
 
 void FormulaUI::ChangedFormula(TrueFormula* ret)
@@ -223,4 +184,124 @@ QList<Lotter> FormulaUI::getLottersFromItem()
 		lotters.push_back(lotter);
 	}
 	return lotters;
+}
+
+void FormulaUI::clearAllLotter()
+{
+	clearLotterItem();
+}
+
+Lotter FormulaUI::getLotterByQuery(QSqlQuery query)
+{
+	QList<int> redBall;
+	int greenBall=0;
+	int i = 0;
+	while (query.next())
+	{
+		if (i==6)
+		{
+			greenBall = query.value(0).toInt() - 100;
+			break;
+		}
+		redBall.push_back(query.value(0).toInt());
+		i++;
+	}
+	if (greenBall != 0)
+	{
+		return Lotter(redBall, greenBall, QDate::currentDate());
+	}
+	return Lotter();
+}
+
+QList<Lotter> FormulaUI::getLByMC(int v1, int num)
+{
+	QList<Lotter> ql_out;
+	for (int i = 0; i < num; i++)
+	{
+		Lotter lotter = getLotterByQuery(_sqlUT->excuteCall("predictNextByMax(%d)", v1));
+		ql_out.push_back(lotter);
+	}
+	return ql_out;
+}
+
+QList<Lotter> FormulaUI::getLByRC(int v1, int num)
+{
+	QList<Lotter> ql_out;
+	for (int i = 0; i < num; i++)
+	{
+		Lotter lotter = getLotterByQuery(_sqlUT->excuteCall("predictNextByRecent(%d)", v1));
+		ql_out.push_back(lotter);
+	}
+	return ql_out;
+}
+
+QList<Lotter> FormulaUI::getLByMRC(int v1, int v2, int num)
+{
+	QList<Lotter> ql_out;
+	for (int i = 0; i < num; i++)
+	{
+		Lotter lotter = getLotterByQuery(_sqlUT->excuteCall("predictNextByMR(%d,%d)", v1,v2));
+		ql_out.push_back(lotter);
+	}
+	return ql_out;
+}
+
+void FormulaUI::predictNextLotter()
+{
+	QList<Lotter> qlotter_list;
+	QString error_out;
+	int num = ui->PredictNumberEdit->text().toInt();
+	int mc = ui->MaxContinue->text().toInt();
+	int rc = ui->RecentContinue->text().toInt();
+	qDebug() << num << mc << rc;
+	if (mc < 0 || rc < 0 || (mc == 0 && rc == 0))
+	{
+		QMessageBox box;
+		box.setText("请输入正整数");
+		box.exec();
+		return;
+	}
+
+	int sum_predict = 0;
+	if (mc > 0 && rc == 0)
+	{
+		sum_predict = _sqlUT->excuteFunc("getMCNum(%d)");
+	}
+	else if (rc > 0 && mc == 0)
+	{
+		sum_predict = _sqlUT->excuteFunc("getRCNum(%d)");
+	}
+	else if (mc > 0 && rc > 0){
+		sum_predict = _sqlUT->excuteFunc("getMRCNum(%d,%d)");
+	}
+
+	qDebug() << sum_predict;
+
+	if (sum_predict < 50)
+	{
+		
+		QMessageBox box;
+		box.setText("样本过少，请更改条件");
+		box.exec();
+		return;
+	}
+
+	if (mc > 0 && rc==0)
+	{
+		qlotter_list = getLByMC(mc, num);
+	}
+	else if (rc > 0 && mc == 0)
+	{
+		qlotter_list = getLByRC(rc, num);
+	}
+	else if (mc > 0 && rc > 0){
+		qlotter_list = getLByMRC(mc, rc , num);
+	}
+
+	if (qlotter_list.size() > 0)
+	{
+		for(auto& obj: qlotter_list){
+			addLotterItem(obj);
+		}
+	}
 }

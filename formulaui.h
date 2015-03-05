@@ -5,6 +5,8 @@
 #include "TrueFormula.h"
 #include "mainwindow.h"
 
+struct Lotter;
+
 namespace Ui {
 class FormulaUI;
 }
@@ -19,6 +21,13 @@ public:
 
 	inline void initFormula(FormulaList* in, MainWindow* m){ fl = in; mainPoint = m; emit initFunc(); };
 
+	Lotter getLotterByQuery(QSqlQuery);
+
+private:
+	QList<Lotter> getLByMC(int,int);
+	QList<Lotter> getLByRC(int,int);
+	QList<Lotter> getLByMRC(int,int,int);
+
 signals:
 	void FormulaChanged(TrueFormula*);
 	void initFunc();
@@ -27,6 +36,7 @@ private slots:
 void generateFormulate();
 
 void predictNextLotter();
+void clearAllLotter();
 
 void ChangedFormula(TrueFormula*);
 
@@ -36,6 +46,8 @@ private:
 	Ui::FormulaUI *ui;
 	FormulaList* fl;
 	MainWindow* mainPoint;
+
+
 
 private:
 	void addTableItem(QString);

@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>900</width>
     <height>600</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>800</width>
+    <width>900</width>
     <height>600</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>800</width>
+    <width>900</width>
     <height>600</height>
    </size>
   </property>
@@ -40,8 +40,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>500</x>
-     <y>550</y>
+     <x>640</x>
+     <y>570</y>
      <width>161</width>
      <height>32</height>
     </rect>
@@ -163,8 +163,8 @@
   <widget class="QPushButton" name="GenerateFormula">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>550</y>
+     <x>50</x>
+     <y>570</y>
      <width>111</width>
      <height>31</height>
     </rect>
@@ -176,8 +176,8 @@
   <widget class="QPushButton" name="predictBT">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>550</y>
+     <x>180</x>
+     <y>570</y>
      <width>121</width>
      <height>31</height>
     </rect>
@@ -189,8 +189,8 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>400</x>
-     <y>510</y>
+     <x>20</x>
+     <y>540</y>
      <width>71</width>
      <height>16</height>
     </rect>
@@ -202,8 +202,8 @@
   <widget class="QLineEdit" name="PredictNumberEdit">
    <property name="geometry">
     <rect>
-     <x>470</x>
-     <y>510</y>
+     <x>90</x>
+     <y>540</y>
      <width>113</width>
      <height>20</height>
     </rect>
@@ -262,6 +262,71 @@
      <string>蓝球</string>
     </property>
    </column>
+  </widget>
+  <widget class="QPushButton" name="clearLotter">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>570</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>清除所有</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="MaxContinue">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>540</y>
+     <width>113</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>540</y>
+     <width>81</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>最大连对&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="RecentContinue">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>540</y>
+     <width>113</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>540</y>
+     <width>81</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>最近连对&gt;</string>
+   </property>
   </widget>
  </widget>
  <resources/>

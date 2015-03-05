@@ -24,7 +24,7 @@ TrueFormula* TrueFormula::RandGenerate(int number)
 	auto query = tf->insertIntoDB();
 	if (query.lastError().text().size()>2)
 	{
-		tf->releaseThis();
+		SAFE_DELETE(tf);
 		tf = TrueFormula::RandGenerate(number);
 	}
 	tf->InitIndexId();
@@ -174,7 +174,8 @@ QSqlQuery TrueFormula::insertIntoDB()
 
 void TrueFormula::InitIndexId()
 {
-	setIndexId(_sqlUT->excuteFunc("getIndexId('%s')", getText()));
+	setIndexId(_sqlUT->excuteFunc("getIndexId('%s')", getText().toStdString().c_str()));
+	qDebug() << "yes!";
 }
 
 void TrueFormula::parse()
@@ -259,7 +260,7 @@ void FormulaList::addList(FormulaList* list)
 			_list.push_back(obj);
 		}
 	}
-//	list->releaseOnly();
+	SAFE_DELETE(list);
 }
 
 bool FormulaList::containsByText(TrueFormula* formula)
@@ -283,9 +284,8 @@ void FormulaList::releaseAll()
 {
 	for (auto& obj : _list)
 	{
-		obj->releaseThis();
+		SAFE_DELETE(obj);
 	}
-	delete this;
 }
 
 FormulaList::FormulaList()

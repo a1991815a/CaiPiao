@@ -1,6 +1,7 @@
 #include "DBThread.h"
 #include "MysqlUtils.h"
 #include "CustomDefine.h"
+#include "mainwindow.h"
 
 DBThread* DBThread::_instance = nullptr;
 
@@ -54,12 +55,17 @@ void DBThread::pushSql(QString _sql)
 
 void DBThread::excuteNext()
 {
+	int sum_index = _sql_list.size();
+	int current_index = 0;
+
 	if (!_sql_list.isEmpty())
 	{
 		for (auto& obj : _sql_list){
 			_sqlUT->excute(obj);
 			qDebug() << obj;
 			_sql_list.removeOne(obj);
+			current_index++;
+			CHANGE_TASK(current_index,sum_index , true);
 		}
 	}
 }

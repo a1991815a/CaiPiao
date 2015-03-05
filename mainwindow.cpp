@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
 {	
+	_instance = this;
 	_sqlUT->openDB();
 	formula_list = FormulaList::createByQuery(_sqlUT->excute("select * from formula"));
 	last_record = _sqlUT->excute("select * from RecordData").value(0).toDate();
@@ -52,23 +53,28 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(TEST_1()));
 	connect(ui->showList, SIGNAL(currentRowChanged(int)), this, SLOT(RowChanged(int)));
 	connect(ui->formulaBT, SIGNAL(clicked()), this, SLOT(formulaBT()));
+	connect(this, SIGNAL(processChange(int)), this, SLOT(changeProcess(int)));
+	connect(_dataManager, SIGNAL(processChange(int)), this, SLOT(changeProcess(int)));
+
 	net->get(QNetworkRequest(QUrl("http://f.opencai.net/utf8/ssq-50.json")));
+	
 	
 	
 
 	if (last_record < QDate::currentDate())
 	{
+		qDebug() << last_record;
 		QString out_data = QDate::currentDate().toString("yyyy-MM-dd");
 		_sqlUT->excute("update RecordData set last_record='%s'", out_data.toStdString().c_str());
 		for (int i = 0; i < 50; i++)
 		{
 			int no1 = ValueModelBase::getRand(5, 13);
-			qDebug() << no1;
+			qDebug() << "输出！： " << i << no1;
 			TrueFormula::RandGenerate(no1);
 		}
 	}
 
-	_dataManager->start();
+	_dataManager->start(QThread::LowestPriority);
 }
 
 void MainWindow::replyFinished(QNetworkReply* reply){
@@ -127,6 +133,7 @@ void MainWindow::replyFinished(QNetworkReply* reply){
 
 MainWindow::~MainWindow()
 {
+	_sqlUT->close();
 	formula_list->writeToFile();
 	delete ui;
 }
@@ -518,8 +525,10 @@ void MainWindow::formulaBT()
 
 void MainWindow::exitAction()
 {
-	if (_dbThread->getInstance()->isEmpty())
+	if (_dbThread->getInstance()->isEmpty()){
+		_sqlUT->close();
 		exit(0);
+	}
 	else
 	{
 		QMessageBox box;
@@ -573,6 +582,35 @@ QList<Lotter> MainWindow::getFromDB()
 
 	return qlotters;
 }
+
+void MainWindow::changeProcess(int value)
+{
+	ui->mathBar->setValue(value);
+}
+
+void MainWindow::changeTask(int index, int sum, bool _state)
+{
+	ui->mathBar->setRange(0, sum);
+	QString before_string;
+	if (_state)
+	{
+		before_string = "数据库：";	
+	}
+	else
+	{
+		before_string = "计算中：";
+	}
+
+	if (sum == 0)
+	{
+		ui->NumCal->setText(before_string + "0");
+		emit processChange(0);
+	}
+	ui->NumCal->setText(before_string + QString::number(index) + "/" + QString::number(sum));
+	emit processChange(index);
+}
+
+MainWindow* MainWindow::_instance=nullptr;
 
 int MainWindow::currentListIndex = 0;
 

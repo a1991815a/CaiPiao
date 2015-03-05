@@ -42,6 +42,7 @@ bool MysqlUtils::close()
 
 QSqlQuery MysqlUtils::excute(QString sql)
 {
+	qDebug() << sql;
 	QSqlQuery query;
 	if (!db.isOpen())
 	{
@@ -55,7 +56,6 @@ QSqlQuery MysqlUtils::excute(QString sql)
 	{
 		qDebug() << query.lastError().text();
 	}
-
 	return query;
 }
 
@@ -124,7 +124,8 @@ int MysqlUtils::excuteFunc(QString _func)
 	 if (query.lastError().text().size() > 1) {
 		 qDebug() << query.lastError().text();
 	 }
-	 query.next();
+
+	 bool end = query.next();
 	 return query.value(0).toInt();
 }
 
@@ -139,6 +140,7 @@ int MysqlUtils::excuteFunc(const char* format, ...)
 
 void MysqlUtils::openDB()
 {
+	close();
 	if (!db.open())
 	{
 		qDebug() << "error:" << db.lastError();

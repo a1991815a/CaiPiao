@@ -42,10 +42,10 @@ public:
 
 	inline int getIndexId() const { return indexId; }
 	inline void setIndexId(int val) { indexId = val; }
-
+	~TrueFormula();
 private:
 	TrueFormula(Element*);
-	~TrueFormula();
+	
 	Formula* _formula;
 	int _min, _max;
 	const QList<Lotter>* const lotter_list;
